@@ -26,6 +26,15 @@ restore_cache "$CACHEKEY" &> restore.log
 echo '--- :package: Storing cache before npm ci'
 tar -czf cache-before-npm-ci.tar.gz "$LOCAL_NPM_CACHE"
 
+echo '--- Look into cache folder'
+set -x
+ls -R "$LOCAL_NPM_CACHE"
+set +x
+
+echo '+++ Check cache folders exist'
+[[ -d "$LOCAL_NPM_CACHE/_logs" ]] && echo "_logs exists" || echo "_logs does not exist!"
+[[ -d "$LOCAL_NPM_CACHE/_cacache" ]] && echo "_cacache exists" || echo "_cacache does not exist!"
+
 echo "--- :npm: Install Node dependencies"
 
 MAX_SOCKETS=15 # Default value from npm
