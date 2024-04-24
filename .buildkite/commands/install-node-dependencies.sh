@@ -23,6 +23,9 @@ echo "--- :npm: Restore npm cache if present"
 # restore_cache "$CACHEKEY"
 restore_cache "$CACHEKEY" &> restore.log
 
+echo '--- :package: Storing cache before npm ci'
+tar -czf cache-before-npm-ci.tar.gz "$LOCAL_NPM_CACHE"
+
 echo "--- :npm: Install Node dependencies"
 
 MAX_SOCKETS=15 # Default value from npm
@@ -55,4 +58,5 @@ echo "--- :npm: Save cache if necessary"
 rm -rf "$LOCAL_NPM_CACHE/_cacache/tmp"
 save_cache "$LOCAL_NPM_CACHE" "$CACHEKEY" &> compress.log
 
-tar -czf cache.tar.gz "$LOCAL_NPM_CACHE"
+echo '--- :package: Storing cache after npm ci'
+tar -czf cache-after-npm-ci.tar.gz "$LOCAL_NPM_CACHE"

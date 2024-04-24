@@ -21,7 +21,7 @@ steps:
       queue: default
     plugins: *common_plugins
     artifact_paths:
-      - cache.tar.gz
+      - 'cache*.tar.gz'
       - '*.log'
 
   # Deleted other steps to avoid races in creating the cache, and also getting faster feedback.
