@@ -7,14 +7,21 @@ PACKAGE_HASH=$(hash_file package-lock.json)
 
 CACHEKEY="$BUILDKITE_PIPELINE_SLUG-npm-$PLATFORM-$ARCHITECTURE-node-$NODE_VERSION-$PACKAGE_HASH-gio-experiment"
 
+# Using a cache in the local path because I thought it might avoid possible issues accessing $HOME.
+# Unfortunately, that doesn't seem to be the case.
+# That is, I'm still experiencing the missing files in the cache.
+#
+# Leaving it local just in case...
 LOCAL_NPM_CACHE=./vendor/npm
 mkdir -p $LOCAL_NPM_CACHE
 echo "--- :npm: Set npm to use $LOCAL_NPM_CACHE for cache"
 npm set cache $LOCAL_NPM_CACHE
+echo '+++ Check npm cache path'
 echo "npm cache set to $(npm get cache)"
 
 echo "--- :npm: Restore npm cache if present"
-restore_cache "$CACHEKEY"
+# restore_cache "$CACHEKEY"
+restore_cache "$CACHEKEY" &> restore.log
 
 echo "--- :npm: Install Node dependencies"
 
@@ -46,6 +53,6 @@ echo "--- :npm: Save cache if necessary"
 #
 # Example: https://buildkite.com/automattic/gutenberg-mobile/builds/8857#018e37eb-7afc-4280-b736-cba76f02f1a3/524
 rm -rf "$LOCAL_NPM_CACHE/_cacache/tmp"
-save_cache "$LOCAL_NPM_CACHE" "$CACHEKEY"
+save_cache "$LOCAL_NPM_CACHE" "$CACHEKEY" &> compress.log
 
-tar -czf "$LOCAL_NPM_CACHE" cache.tar.gz
+tar -czf cache.tar.gz "$LOCAL_NPM_CACHE"

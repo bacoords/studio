@@ -1,7 +1,7 @@
 # Nodes with values to reuse in the pipeline.
 common_params:
   plugins: &common_plugins
-    - automattic/a8c-ci-toolkit#3.3.0
+    - automattic/a8c-ci-toolkit#mokagio/verbose-tar
     - automattic/nvm#0.3.0
 
 # All current steps use the same agent and environment; we can define them as top-level
@@ -22,65 +22,6 @@ steps:
     plugins: *common_plugins
     artifact_paths:
       - cache.tar.gz
+      - '*.log'
 
-  - label: Unit Tests
-    key: unit_tests
-    command: |
-      .buildkite/commands/install-node-dependencies.sh
-      echo '--- :npm: Run Unit Tests'
-      npm run test
-    agents:
-      queue: default
-    plugins: *common_plugins
-
-  - label: End To End (macOS only)
-    key: e2e_macos
-    plugins: *common_plugins
-    command: |
-      .buildkite/commands/install-node-dependencies.sh
-      echo '--- :package: Build app'
-      npm run package
-      echo '--- Run E2E Tests'
-      npm run e2e
-
-  - label: '🔨 Create Dev Build'
-    key: 'dev'
-    command: |
-      .buildkite/commands/prepare-environment.sh
-      .buildkite/commands/install-node-dependencies.sh
-
-      echo "--- :node: Building Binary"
-      node ./scripts/prepare-dev-build-version.mjs
-      npm run make:macos-x64
-      npm run make:macos-arm64
-
-      .buildkite/commands/post-process-binary-for-distribution.sh
-
-      echo "--- 🚀 Distributing Binary"
-      bundle exec fastlane distribute_dev_build
-
-    plugins: *common_plugins
-    artifact_paths:
-      - 'out/*.app.zip'
-    if: "build.branch == 'trunk' && build.tag !~ /^v[0-9]+/"
-
-  - label: '🔨 Create Release Build'
-    key: 'release'
-    command: |
-      .buildkite/commands/prepare-environment.sh
-      .buildkite/commands/install-node-dependencies.sh
-
-      echo "--- :node: Building Binary"
-      node ./scripts/confirm-tag-matches-version.mjs
-      npm run make:macos-x64
-      npm run make:macos-arm64
-
-      .buildkite/commands/post-process-binary-for-distribution.sh
-
-      echo "--- 🚀 Distributing Binary"
-      bundle exec fastlane distribute_release_build
-
-    plugins: *common_plugins
-    artifact_paths:
-      - 'out/*.app.zip'
-    if: "build.tag =~ /^v[0-9]+/"
+  # Deleted other steps to avoid races in creating the cache, and also getting faster feedback.
