@@ -49,7 +49,7 @@ const config: ForgeConfig = {
 				certificateFile: 'certificate.pfx',
 				certificatePassword: process.env.WINDOWS_CODE_SIGNING_CERT_PASSWORD,
 			},
-			[ 'win32', 'win64' ]
+			[ 'win32' ]
 		),
 		...( process.env.SKIP_DMG
 			? []
