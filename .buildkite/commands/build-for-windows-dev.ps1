@@ -7,6 +7,6 @@ Write-Host "--- :node: Building App"
 node ./scripts/prepare-dev-build-version.mjs
 If ($LastExitCode -ne 0) { Exit $LastExitCode }
 
-npm run make
+npm run make:windows
 If ($LastExitCode -ne 0) { Exit $LastExitCode }
 
