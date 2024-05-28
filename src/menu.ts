@@ -80,7 +80,7 @@ function getAppMenu( mainWindow: BrowserWindow | null ) {
 				{ type: 'separator' },
 				{
 					label: __( 'Settings…' ),
-					accelerator: 'CommandOrControl+,',
+					accelerator: process.platform === 'win32' ? undefined : 'CommandOrControl+,',
 					click: () => {
 						withMainWindow( ( window ) => {
 							window.webContents.send( 'user-settings' );
@@ -106,7 +106,7 @@ function getAppMenu( mainWindow: BrowserWindow | null ) {
 			submenu: [
 				{
 					label: __( 'Add Site…' ),
-					accelerator: 'CommandOrControl+N',
+					accelerator: process.platform === 'win32' ? undefined : 'CommandOrControl+N',
 					click: () => {
 						withMainWindow( ( window ) => {
 							window.webContents.send( 'add-site' );
