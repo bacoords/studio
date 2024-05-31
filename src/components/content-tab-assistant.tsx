@@ -17,14 +17,19 @@ const md = new Remarkable( {
 		if ( lang && hljs.getLanguage( lang ) ) {
 			try {
 				return hljs.highlight( lang, str ).value;
-			} catch ( err ) {}
+			} catch ( err ) {
+				console.error( `Error highlighting with language ${ lang }:`, err );
+			}
 		}
 
 		try {
 			return hljs.highlightAuto( str ).value;
-		} catch ( err ) {}
+		} catch ( err ) {
+			console.error( 'Error highlighting automatically:', err );
+		}
 
-		return ''; // use external default escaping
+		// Fallback block if hljs syntax highlighting failed
+		return '<pre><code>' + str + '</code></pre>';
 	},
 } );
 
