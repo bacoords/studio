@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState, useEffect, useRef } from 'react';
-import { useAssistant } from '../hooks/use-assistant';
+import Markdown from 'react-markdown';
+import { Message as AssistantMessage, useAssistant } from '../hooks/use-assistant';
 import { useAssistantApi } from '../hooks/use-assistant-api';
 import { cx } from '../lib/cx';
 import { getIpcApi } from '../lib/get-ipc-api';
@@ -26,7 +27,7 @@ export const Message = ( { children, isUser }: MessageProps ) => (
 				! isUser && 'bg-white'
 			) }
 		>
-			{ children }
+			{ typeof children === 'string' ? <Markdown>{ children }</Markdown> : children }
 		</div>
 	</div>
 );
@@ -40,15 +41,14 @@ export function ContentTabAssistant( { selectedSite }: ContentTabAssistantProps 
 
 	const handleSend = async () => {
 		if ( input.trim() ) {
-			addMessage( input, 'user' );
+			const userMessage: Message = { content: input, role: 'user' };
+			addMessage( userMessage.content, userMessage.role );
 			setInput( '' );
 			try {
-				const { message } = await fetchAssistant( [
-					...messages,
-					{ content: input, role: 'user' },
-				] );
+				const { message } = await fetchAssistant( [ ...messages, userMessage ] );
 				if ( message ) {
-					addMessage( message, 'assistant' );
+					const assistantMessage: AssistantMessage = { content: message, role: 'assistant' };
+					addMessage( assistantMessage.content, assistantMessage.role );
 				}
 			} catch ( error ) {
 				// A delay is added to avoid the message box being closed by the previous keydown event
