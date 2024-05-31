@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
+import hljs from 'highlight.js';
 import React, { useState, useEffect, useRef } from 'react';
-import Markdown from 'react-markdown';
+import { Remarkable } from 'remarkable';
 import { Message as AssistantMessage, useAssistant } from '../hooks/use-assistant';
 import { useAssistantApi } from '../hooks/use-assistant-api';
 import { cx } from '../lib/cx';
@@ -9,6 +10,23 @@ import { MessageThinking } from './assistant-thinking';
 import Button from './button';
 import { AssistantIcon } from './icons/assistant';
 import { MenuIcon } from './icons/menu';
+import '../assistant-markdown.css';
+
+const md = new Remarkable( {
+	highlight: function ( str, lang ) {
+		if ( lang && hljs.getLanguage( lang ) ) {
+			try {
+				return hljs.highlight( lang, str ).value;
+			} catch ( err ) {}
+		}
+
+		try {
+			return hljs.highlightAuto( str ).value;
+		} catch ( err ) {}
+
+		return ''; // use external default escaping
+	},
+} );
 
 interface ContentTabAssistantProps {
 	selectedSite: SiteDetails;
@@ -27,7 +45,14 @@ export const Message = ( { children, isUser }: MessageProps ) => (
 				! isUser && 'bg-white'
 			) }
 		>
-			{ typeof children === 'string' ? <Markdown>{ children }</Markdown> : children }
+			{ typeof children === 'string' ? (
+				<div
+					id="assistant-markdown"
+					dangerouslySetInnerHTML={ { __html: md.render( children ) } }
+				/>
+			) : (
+				children
+			) }
 		</div>
 	</div>
 );
@@ -41,7 +66,7 @@ export function ContentTabAssistant( { selectedSite }: ContentTabAssistantProps 
 
 	const handleSend = async () => {
 		if ( input.trim() ) {
-			const userMessage: Message = { content: input, role: 'user' };
+			const userMessage: AssistantMessage = { content: input, role: 'user' };
 			addMessage( userMessage.content, userMessage.role );
 			setInput( '' );
 			try {
@@ -51,7 +76,6 @@ export function ContentTabAssistant( { selectedSite }: ContentTabAssistantProps 
 					addMessage( assistantMessage.content, assistantMessage.role );
 				}
 			} catch ( error ) {
-				// A delay is added to avoid the message box being closed by the previous keydown event
 				setTimeout(
 					() =>
 						getIpcApi().showMessageBox( {

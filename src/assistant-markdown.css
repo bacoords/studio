@@ -1,0 +1,30 @@
+@import '~highlight.js/styles/github.css';
+
+#assistant-markdown {
+	font-family: Arial, sans-serif;
+	line-height: 1.6;
+	word-wrap: break-word;
+}
+
+#assistant-markdown p {
+	margin: 0.5em 0;
+}
+
+#assistant-markdown code {
+	background-color: #f5f5f5;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	white-space: pre-wrap;
+}
+
+#assistant-markdown pre {
+	background-color: #f5f5f5;
+	padding: 1em;
+	border-radius: 3px;
+	overflow-x: auto;
+}
+
+#assistant-markdown pre code {
+	background-color: transparent;
+	padding: 0;
+}
