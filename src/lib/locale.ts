@@ -1,6 +1,9 @@
 import { app } from 'electron';
+import path from 'path';
 import { match } from '@formatjs/intl-localematcher';
 import * as Sentry from '@sentry/electron/main';
+import fs from 'fs-extra';
+import { getResourcesPath } from '../storage/paths';
 import type { LocaleData } from '@wordpress/i18n';
 
 export const DEFAULT_LOCALE = 'en';
@@ -35,13 +38,17 @@ export function getSupportedLocale(): string {
 	return match( [ app.getLocale() ], supportedLocales, DEFAULT_LOCALE );
 }
 
-export function getLocaleData( locale: string ): LocaleData | null {
+export async function getLocaleData( locale: string ): Promise< LocaleData | null > {
 	if ( locale === DEFAULT_LOCALE || ! supportedLocales.includes( locale ) ) {
 		return null;
 	}
 
 	try {
-		return require( `../translations/studio-${ locale }.jed.json` );
+		const translationsPath = path.join( getResourcesPath(), 'translations' );
+		const translationFile = JSON.parse(
+			await fs.readFile( path.join( translationsPath, `studio-${ locale }.jed.json` ), 'utf8' )
+		) as LocaleData;
+		return translationFile;
 	} catch ( err ) {
 		console.error( `Failed to load locale data for "${ locale }"`, err );
 		Sentry.captureException( err );
