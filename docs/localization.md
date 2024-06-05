@@ -38,5 +38,5 @@ If you want to add support for another language you will need to add it to the
    7. Leave the other fields as default and click **Export**.
 
 4. **Add to Project**
-   Unzip the exported strings and add them to the `src/translations`. Overwrite
+   Unzip the exported strings and add them to the `translations`. Overwrite
    the files in there with your new files.
