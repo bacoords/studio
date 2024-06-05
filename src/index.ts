@@ -15,7 +15,7 @@ import { PROTOCOL_PREFIX } from './constants';
 import * as ipcHandlers from './ipc-handlers';
 import { getPlatformName } from './lib/app-globals';
 import { bumpAggregatedUniqueStat } from './lib/bump-stats';
-import { getLocaleData, getSupportedLocale } from './lib/locale';
+import { getLocaleData, getSupportedLocale, setCurrentLocale } from './lib/locale';
 import { handleAuthCallback, setUpAuthCallbackHandler } from './lib/oauth';
 import { setupLogging } from './logging';
 import { createMainWindow, withMainWindow } from './main-window';
@@ -168,7 +168,8 @@ async function appBoot() {
 	app.on( 'ready', async () => {
 		// Set translations based on supported locale
 		const locale = getSupportedLocale();
-		const localeData = getLocaleData( locale );
+		const localeData = await getLocaleData( locale );
+		setCurrentLocale( locale );
 		defaultI18n.setLocaleData( localeData?.locale_data?.messages );
 
 		console.log( `App version: ${ app.getVersion() }` );

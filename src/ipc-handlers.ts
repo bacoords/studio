@@ -12,6 +12,7 @@ import {
 import fs from 'fs';
 import nodePath from 'path';
 import * as Sentry from '@sentry/electron/main';
+import { __, defaultI18n } from '@wordpress/i18n';
 import archiver from 'archiver';
 import { copySync } from 'fs-extra';
 import { SQLITE_FILENAME } from '../vendor/wp-now/src/constants';
@@ -21,7 +22,7 @@ import { isEmptyDir, pathExists, isWordPressDirectory, sanitizeFolderName } from
 import { getImageData } from './lib/get-image-data';
 import { isErrnoException } from './lib/is-errno-exception';
 import { isInstalled } from './lib/is-installed';
-import { getLocaleData, getSupportedLocale } from './lib/locale';
+import { getCurrentLocale, getLocaleData, setCurrentLocale } from './lib/locale';
 import * as oauthClient from './lib/oauth';
 import { createPassword } from './lib/passwords';
 import { phpGetThemeDetails } from './lib/php-get-theme-details';
@@ -33,6 +34,7 @@ import {
 	removeLegacySqliteIntegrationPlugin,
 } from './lib/sqlite-versions';
 import { writeLogToFile, type LogLevel } from './logging';
+import { withMainWindow } from './main-window';
 import { popupMenu } from './menu';
 import { SiteServer, createSiteWorkingDirectory } from './site-server';
 import { DEFAULT_SITE_PATH, getServerFilesPath, getSiteThumbnailPath } from './storage/paths';
@@ -450,8 +452,8 @@ export async function copyText( event: IpcMainInvokeEvent, text: string ) {
 }
 
 export async function getAppGlobals( _event: IpcMainInvokeEvent ): Promise< AppGlobals > {
-	const locale = getSupportedLocale();
-	const localeData = getLocaleData( locale );
+	const locale = getCurrentLocale();
+	const localeData = await getLocaleData( locale );
 
 	return {
 		platform: process.platform,
@@ -614,4 +616,11 @@ export async function showNotification(
 
 export function popupAppMenu( _event: IpcMainInvokeEvent ) {
 	popupMenu();
+}
+
+export async function changeLanguage( event: IpcMainInvokeEvent, locale: string ) {
+	setCurrentLocale( locale );
+	const localeData = await getLocaleData( locale );
+	defaultI18n.setLocaleData( localeData?.locale_data?.messages );
+	withMainWindow( ( mainWindow ) => mainWindow.reload() );
 }

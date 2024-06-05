@@ -49,6 +49,7 @@ const api: IpcApi = {
 	logRendererMessage: ( level: LogLevel, ...args: any[] ) =>
 		ipcRenderer.send( 'logRendererMessage', level, ...args ),
 	popupAppMenu: () => ipcRenderer.invoke( 'popupAppMenu' ),
+	changeLanguage: ( locale: string ) => ipcRenderer.invoke( 'changeLanguage', locale ),
 };
 
 contextBridge.exposeInMainWorld( 'ipcApi', api );
