@@ -196,6 +196,16 @@ export default function UserSettings() {
 		}
 	}, [ allSnapshots, deleteAllSnapshots, __ ] );
 
+	const [ currentLocale, setCurrentLocale ] = useState( 'en' );
+	const changeLanguage = async ( value: string ) => {
+		await getIpcApi().changeLanguage( value );
+	};
+	useEffect( () => {
+		getIpcApi()
+			.getAppGlobals()
+			.then( ( { locale } ) => setCurrentLocale( locale ) );
+	}, [] );
+
 	return (
 		<>
 			{ needsToOpenUserSettings && (
@@ -224,6 +234,21 @@ export default function UserSettings() {
 						<div className="gap-6 flex flex-col">
 							<UserInfo onLogout={ logout } user={ user } />
 							<div className="border border-[#F0F0F0] w-full"></div>
+							<label className="flex flex-col gap-1.5 leading-4">
+								<span className="font-semibold">{ __( 'Change Language:' ) }</span>
+								<select
+									id="language-selector"
+									className="rounded-sm border p-2 "
+									onChange={ ( e ) => changeLanguage( e.target.value ) }
+								>
+									<option value="en" selected={ currentLocale === 'en' }>
+										English
+									</option>
+									<option value="es" selected={ currentLocale === 'es' }>
+										Spanish
+									</option>
+								</select>
+							</label>
 							<SnapshotInfo
 								isDeleting={ loadingDeletingAllSnapshots }
 								isDisabled={
