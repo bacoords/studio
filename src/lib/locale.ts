@@ -5,6 +5,8 @@ import type { LocaleData } from '@wordpress/i18n';
 
 export const DEFAULT_LOCALE = 'en';
 
+let currentLocale = DEFAULT_LOCALE;
+
 const supportedLocales = [
 	'ar',
 	'de',
@@ -45,4 +47,12 @@ export function getLocaleData( locale: string ): LocaleData | null {
 		Sentry.captureException( err );
 		return null;
 	}
+}
+
+export function setCurrentLocale( locale: string ) {
+	currentLocale = locale;
+}
+
+export function getCurrentLocale() {
+	return currentLocale;
 }
