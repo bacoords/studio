@@ -44,6 +44,9 @@ export class E2ESession {
 				E2E_APP_DATA_PATH: this.appDataPath,
 				E2E_HOME_PATH: this.homePath,
 			},
+			recordVideo: {
+				dir: 'test-results/videos',
+			},
 			timeout: 60_000,
 		} );
 		this.mainWindow = await this.electronApp.firstWindow( { timeout: 60_000 } );
