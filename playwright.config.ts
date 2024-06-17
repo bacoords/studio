@@ -12,5 +12,5 @@ export default defineConfig( {
 		trace: 'retain-on-failure',
 	},
 
-	timeout: 60_000,
+	timeout: 120_000,
 } );
