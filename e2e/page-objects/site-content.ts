@@ -46,4 +46,8 @@ export default class SiteContent {
 			}
 		}
 	}
+
+	screenshot( name: string ) {
+		this.page.screenshot( { path: `test-results/screenshots/${ name }.png`, type: 'png' } );
+	}
 }

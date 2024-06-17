@@ -53,6 +53,7 @@ steps:
     artifact_paths:
       - test-results/**/*.zip
       - test-results/**/*.webm
+      - test-results/**/*.png
     plugins: *common_plugins
     agents:
       queue: "{{ matrix }}"

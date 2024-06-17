@@ -25,7 +25,9 @@ test.describe( 'Servers', () => {
 		await session.mainWindow.waitForTimeout( 500 );
 		await onboarding.continueButton.click();
 		const siteContent = new SiteContent( session.mainWindow, defaultSiteName );
-		await session.mainWindow.waitForTimeout( 500 );
+		siteContent.screenshot( 'screenshot-1' );
+		await session.mainWindow.waitForTimeout( 5_000 );
+		siteContent.screenshot( 'screenshot-2' );
 		await expect( siteContent.siteNameHeading ).toBeVisible( { timeout: 120_000 } );
 	} );
 
