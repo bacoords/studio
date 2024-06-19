@@ -23,7 +23,7 @@ test.describe( 'Servers', () => {
 		await expect( onboarding.heading ).toBeVisible();
 		// Delay clicking the button to avoid errors due to creating the site too early
 		await session.mainWindow.waitForTimeout( 500 );
-		await onboarding.continueButton.click();
+		await onboarding.continueButton.click( { delay: 300 } );
 		const siteContent = new SiteContent( session.mainWindow, defaultSiteName );
 		siteContent.screenshot( 'screenshot-1' );
 		await session.mainWindow.waitForTimeout( 5_000 );
