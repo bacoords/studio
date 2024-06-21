@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
 import { cx } from '../lib/cx';
+import { getIpcApi } from '../lib/get-ipc-api';
 
 /**
  * Sourced from https://stackoverflow.com/a/76616671/378228 to address
@@ -111,47 +112,37 @@ function sansCustomValues( variant: ButtonVariant | undefined ) {
 		: ( variant as Exclude< ButtonVariant, 'outlined' | 'icon' > | undefined );
 }
 
-export default function ButtonComponent( {
-	className,
-	variant,
-	truncate,
-	children,
-	showTooltip,
-	...props
-}: ButtonProps ) {
-	const [ isTruncated, setIsTruncated ] = useState( false );
-	const element = useRef< HTMLSpanElement >( null );
-	const [ resizeListener, sizes ] = useResizeObserver();
-	useEffect( () => {
-		if ( ! element.current || ! truncate ) {
-			return;
-		}
-		setIsTruncated( element.current.offsetWidth < element.current.scrollWidth );
-	}, [ sizes, truncate ] );
+export default function ButtonComponent( props: ComponentProps< typeof Button > ) {
+	const handleClick = ( href?: string ) =>
+		href
+			? () => {
+					getIpcApi().openURL( href );
+			  }
+			: undefined;
+
 	return (
 		<Button
 			{ ...props }
-			variant={ sansCustomValues( variant ) }
-			className={ cx(
-				baseStyles,
-				variant === 'primary' && primaryStyles,
-				variant === 'secondary' && secondaryStyles,
-				variant === 'outlined' && outlinedStyles,
-				variant === 'link' && linkStyles,
-				variant === 'icon' && iconStyles,
-				props.isDestructive && destructiveStyles,
-				className
-			) }
-			showTooltip={ showTooltip || ( truncate && isTruncated ) }
+			onClick={ handleClick( props.href ) }
+			// variant={ sansCustomValues( variant ) }
+			className={ cx( baseStyles ) }
+			// showTooltip={ showTooltip || ( truncate && isTruncated ) }
 		>
-			{ truncate
-				? [
-						<span ref={ element } className="truncate relative" key="content">
-							{ resizeListener }
-							{ children }
-						</span>,
-				  ]
-				: children }
+			{ props.children }
 		</Button>
 	);
 }
+
+export const Foo = () => (
+	<Button
+		href="foo"
+		onClick={ () => {
+			// no-op
+		} }
+		variant="link"
+		className=""
+		showTooltip={ false }
+	>
+		Text
+	</Button>
+);

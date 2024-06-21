@@ -24,9 +24,6 @@ function SidebarAuthFooter() {
 	const { isAuthenticated, authenticate } = useAuth();
 	const isOffline = useOffline();
 	const offlineMessage = __( 'You’re currently offline.' );
-	const openDocs = async () => {
-		await getIpcApi().openURL( STUDIO_DOCS_URL );
-	};
 	if ( isAuthenticated ) {
 		return (
 			<nav aria-label={ __( 'Global' ) }>
@@ -41,7 +38,7 @@ function SidebarAuthFooter() {
 						</Button>
 					</li>
 					<li className="ml-1.5">
-						<Button onClick={ openDocs } aria-label={ __( 'Help' ) } variant="icon">
+						<Button href={ STUDIO_DOCS_URL } aria-label={ __( 'Help' ) } variant="icon">
 							<Icon size={ 22 } className="m-px text-white" icon={ help } />
 						</Button>
 					</li>
