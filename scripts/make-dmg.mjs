@@ -30,7 +30,10 @@ child_process.execSync(
 		`--icon ${ packageJson.productName } 533 122 ` +
 		'--icon-size 80 ' +
 		'--app-drop-link 533 354 ' +
-		'--skip-jenkins ' +
+    // Without --skip-jenkins, the DMG background and positioning is fine locally
+    // What will happen in CI?
+    //
+		// '--skip-jenkins ' +
 		`${ dmgPath } ` +
 		appPath
 );
